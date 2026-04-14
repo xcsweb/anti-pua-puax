@@ -11,14 +11,17 @@ export default function Home({ mode = 'romance' }: HomeProps) {
   const navigate = useNavigate();
   const setGender = useStore((state) => state.setGender);
   const setTestMode = useStore((state) => state.setTestMode);
+  const resetTest = useStore((state) => state.resetTest);
 
   const handleStartRomance = (gender: 'male' | 'female') => {
+    resetTest();
     setGender(gender);
     setTestMode('romance');
     navigate('/assessment');
   };
 
   const handleStartFull = () => {
+    resetTest();
     setGender(null);
     setTestMode('full');
     navigate('/assessment');

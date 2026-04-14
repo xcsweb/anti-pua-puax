@@ -27,10 +27,6 @@ const generateShuffledQuestions = (gender: Gender, testMode: TestMode): Question
   // Shuffle questions
   let shuffled = shuffleArray(filteredQuestions);
   
-  if (testMode === 'full') {
-    shuffled = shuffled.slice(0, 50);
-  }
-
   // Shuffle options for each question
   shuffled = shuffled.map(q => ({
     ...q,

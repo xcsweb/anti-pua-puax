@@ -206,31 +206,35 @@ export default function Result() {
               <span className="font-black text-xl whitespace-nowrap border-b-[4px] border-black pb-2 mb-1 inline-block self-start">🛡️ 维度防御力</span>
               
               <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-10 font-black text-sm">职场</span>
-                  <div className="flex-1 h-6 border-[3px] border-black bg-gray-100 relative overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${workScore}%` }}
-                      transition={{ duration: 1, delay: 0.2 }}
-                      className="absolute top-0 left-0 h-full bg-[#93c5fd] border-r-[3px] border-black"
-                    />
-                  </div>
-                  <span className="w-10 text-right font-black">{workScore}</span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <span className="w-10 font-black text-sm">家庭</span>
-                  <div className="flex-1 h-6 border-[3px] border-black bg-gray-100 relative overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${familyScore}%` }}
-                      transition={{ duration: 1, delay: 0.4 }}
-                      className="absolute top-0 left-0 h-full bg-[#fde047] border-r-[3px] border-black"
-                    />
-                  </div>
-                  <span className="w-10 text-right font-black">{familyScore}</span>
-                </div>
+                {testMode === 'full' && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="w-10 font-black text-sm">职场</span>
+                      <div className="flex-1 h-6 border-[3px] border-black bg-gray-100 relative overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${workScore}%` }}
+                          transition={{ duration: 1, delay: 0.2 }}
+                          className="absolute top-0 left-0 h-full bg-[#93c5fd] border-r-[3px] border-black"
+                        />
+                      </div>
+                      <span className="w-10 text-right font-black">{workScore}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="w-10 font-black text-sm">家庭</span>
+                      <div className="flex-1 h-6 border-[3px] border-black bg-gray-100 relative overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${familyScore}%` }}
+                          transition={{ duration: 1, delay: 0.4 }}
+                          className="absolute top-0 left-0 h-full bg-[#fde047] border-r-[3px] border-black"
+                        />
+                      </div>
+                      <span className="w-10 text-right font-black">{familyScore}</span>
+                    </div>
+                  </>
+                )}
                 
                 <div className="flex items-center gap-2">
                   <span className="w-10 font-black text-sm">情场</span>
@@ -238,7 +242,7 @@ export default function Result() {
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${romanceScore}%` }}
-                      transition={{ duration: 1, delay: 0.6 }}
+                      transition={{ duration: 1, delay: testMode === 'full' ? 0.6 : 0.2 }}
                       className="absolute top-0 left-0 h-full bg-[#f9a8d4] border-r-[3px] border-black"
                     />
                   </div>
@@ -248,12 +252,14 @@ export default function Result() {
             </div>
 
             {/* Double Standard Comment */}
-            <div className="w-full bg-[#c4b5fd] p-4 border-[4px] border-black shadow-[4px_4px_0px_#000] flex flex-col justify-between items-start gap-2 -rotate-1 mt-1">
-              <span className="font-black text-xl whitespace-nowrap bg-black text-white px-2 py-1 rotate-2 inline-block shadow-[4px_4px_0px_#fde047]">💡 综合鉴定</span>
-              <p className="font-bold text-lg leading-relaxed text-black mt-2 bg-white p-3 border-[3px] border-black w-full shadow-[2px_2px_0px_#000]">
-                {doubleStandardComment}
-              </p>
-            </div>
+            {testMode === 'full' && (
+              <div className="w-full bg-[#c4b5fd] p-4 border-[4px] border-black shadow-[4px_4px_0px_#000] flex flex-col justify-between items-start gap-2 -rotate-1 mt-1">
+                <span className="font-black text-xl whitespace-nowrap bg-black text-white px-2 py-1 rotate-2 inline-block shadow-[4px_4px_0px_#fde047]">💡 综合鉴定</span>
+                <p className="font-bold text-lg leading-relaxed text-black mt-2 bg-white p-3 border-[3px] border-black w-full shadow-[2px_2px_0px_#000]">
+                  {doubleStandardComment}
+                </p>
+              </div>
+            )}
             
             {/* Matches */}
             <div className="flex gap-4 w-full rotate-1 mt-1">
