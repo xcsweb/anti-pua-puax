@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Link } from 'react-router-dom'
+import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Home from './pages/Home'
 import Assessment from './pages/Assessment'
@@ -25,33 +25,52 @@ function About() {
   )
 }
 
+function AppContent() {
+  const location = useLocation();
+
+  const getLinkClass = (path: string) => {
+    const baseClass = "hover:underline decoration-4 underline-offset-4 px-2 py-1 transition-all";
+    const isActive = path === '/romance' 
+      ? location.pathname === '/' || location.pathname === '/romance'
+      : location.pathname === path;
+    
+    return isActive 
+      ? `${baseClass} bg-[#f9a8d4] border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-sm` 
+      : baseClass;
+  };
+
+  return (
+    <div className="min-h-screen p-4 md:p-8 font-brutal flex flex-col items-center">
+      <nav className="card-brutal mb-8 p-4 bg-white flex justify-between items-center w-full max-w-screen-xl mx-auto">
+        <div className="font-black text-2xl tracking-tighter uppercase">PUAX图鉴</div>
+        <div className="flex gap-4 font-bold">
+          <Link to="/romance" className={getLinkClass('/romance')}>反渣测试</Link>
+          <Link to="/full" className={getLinkClass('/full')}>全景防PUA综合测试</Link>
+          <Link to="/gallery/romance" className={getLinkClass('/gallery/romance')}>恋爱图鉴</Link>
+          <Link to="/gallery/full" className={getLinkClass('/gallery/full')}>全景图鉴</Link>
+        </div>
+      </nav>
+      
+      <main className="w-full flex flex-col items-center flex-grow">
+        <Routes>
+          <Route path="/" element={<Home mode="romance" />} />
+          <Route path="/romance" element={<Home mode="romance" />} />
+          <Route path="/full" element={<Home mode="full" />} />
+          <Route path="/assessment" element={<Assessment />} />
+          <Route path="/result" element={<Result />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/gallery/:type" element={<Gallery />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </main>
+    </div>
+  )
+}
+
 function App() {
   return (
     <HashRouter>
-      <div className="min-h-screen p-4 md:p-8 font-brutal flex flex-col items-center">
-        <nav className="card-brutal mb-8 p-4 bg-white flex justify-between items-center w-full max-w-screen-xl mx-auto">
-          <div className="font-black text-2xl tracking-tighter uppercase">PUAX图鉴</div>
-          <div className="flex gap-4 font-bold">
-            <Link to="/romance" className="hover:underline decoration-4 underline-offset-4">反渣测试</Link>
-            <Link to="/full" className="hover:underline decoration-4 underline-offset-4">全景防PUA测试</Link>
-            <Link to="/gallery/romance" className="hover:underline decoration-4 underline-offset-4">恋爱图鉴</Link>
-            <Link to="/gallery/full" className="hover:underline decoration-4 underline-offset-4">全景图鉴</Link>
-          </div>
-        </nav>
-        
-        <main className="w-full flex flex-col items-center flex-grow">
-          <Routes>
-            <Route path="/" element={<Home mode="romance" />} />
-            <Route path="/romance" element={<Home mode="romance" />} />
-            <Route path="/full" element={<Home mode="full" />} />
-            <Route path="/assessment" element={<Assessment />} />
-            <Route path="/result" element={<Result />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/gallery/:type" element={<Gallery />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
-      </div>
+      <AppContent />
     </HashRouter>
   )
 }
