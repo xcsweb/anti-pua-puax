@@ -14,7 +14,8 @@ interface ChatSimulationProps {
 export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnswer, index }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<AnswerOption | null>(null);
-  const [showTyping, setShowTyping] = useState(true);
+  const [displayedMessages, setDisplayedMessages] = useState<string[]>([]);
+  const [isTyping, setIsTyping] = useState(true);
   const [currentQuestionId, setCurrentQuestionId] = useState(question.id);
   
   const gender = useStore((state) => state.gender) || undefined;
@@ -25,21 +26,42 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
     setCurrentQuestionId(question.id);
     setShowOptions(false);
     setSelectedOption(null);
-    setShowTyping(true);
+    setDisplayedMessages([]);
+    setIsTyping(true);
   }
 
   useEffect(() => {
-    // Simulate typing delay before showing incoming message
-    const typingTimer = setTimeout(() => {
-      setShowTyping(false);
-      // Wait a moment then show options
-      setTimeout(() => {
-        setShowOptions(true);
-      }, 500);
-    }, 1500);
-
-    return () => clearTimeout(typingTimer);
-  }, [question.id]);
+    const messages = Array.isArray(question.scenario) ? question.scenario : [question.scenario];
+    
+    if (displayedMessages.length < messages.length) {
+      if (isTyping) {
+        // 正在输入，1.5秒后显示下一条消息
+        const timer = setTimeout(() => {
+          setDisplayedMessages(prev => [...prev, messages[displayedMessages.length]]);
+          setIsTyping(false);
+        }, 1500);
+        return () => clearTimeout(timer);
+      } else {
+        // 停顿0.4秒后再次开始输入
+        const timer = setTimeout(() => {
+          setIsTyping(true);
+        }, 400);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      // 所有消息已显示完毕
+      if (isTyping) {
+        setIsTyping(false);
+      }
+      // 延迟800ms后显示选项
+      if (!showOptions && !selectedOption) {
+        const timer = setTimeout(() => {
+          setShowOptions(true);
+        }, 800);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [displayedMessages.length, isTyping, question.id, question.scenario, showOptions, selectedOption]);
 
   const handleSelect = (option: AnswerOption) => {
     setSelectedOption(option);
@@ -63,7 +85,7 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
           <span className="font-bold text-lg">{question.senderName}</span>
         </div>
         <div className="font-bold text-xl tracking-wide">
-          对方正在输入...
+          {isTyping ? '对方正在输入...' : ''}
         </div>
         <MoreHorizontal size={28} className="cursor-pointer" />
       </div>
@@ -74,13 +96,32 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
           {timeStr}
         </div>
 
-        {/* Incoming Message */}
-        <AnimatePresence mode="wait">
-          {showTyping ? (
+        {/* Displayed Messages */}
+        <AnimatePresence>
+          {displayedMessages.map((text, idx) => (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              key={`msg-${idx}`}
+              initial={{ scale: 0.8, opacity: 0, x: -20 }}
+              animate={{ scale: 1, opacity: 1, x: 0 }}
+              transition={{ type: 'spring', stiffness: 250, damping: 20 }}
+              className="self-start max-w-[85%] flex gap-2"
+            >
+              <img src={senderAvatar} alt="sender" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200 mt-1" />
+              <div className="bg-white border-2 border-black p-3 rounded-2xl rounded-tl-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black mt-1">
+                {text}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {/* Typing Indicator */}
+        <AnimatePresence>
+          {isTyping && (
+            <motion.div
+              key="typing"
+              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
               className="self-start max-w-[85%] flex gap-2"
             >
               <img src={senderAvatar} alt="sender" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200" />
@@ -93,28 +134,6 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
                     transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.2 }}
                   />
                 ))}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, x: -20 }}
-              animate={{ scale: 1, opacity: 1, x: 0 }}
-              transition={{ type: 'spring', stiffness: 250, damping: 20 }}
-              className="self-start max-w-[85%] flex gap-2"
-            >
-              <img src={senderAvatar} alt="sender" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200 mt-1" />
-              <div className="flex flex-col gap-2 items-start mt-1">
-                {Array.isArray(question.scenario) ? (
-                  question.scenario.map((text, idx) => (
-                    <div key={idx} className={`bg-white border-2 border-black p-3 rounded-2xl ${idx === 0 ? 'rounded-tl-none' : ''} shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black`}>
-                      {text}
-                    </div>
-                  ))
-                ) : (
-                  <div className="bg-white border-2 border-black p-3 rounded-2xl rounded-tl-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black">
-                    {question.scenario}
-                  </div>
-                )}
               </div>
             </motion.div>
           )}
