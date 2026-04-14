@@ -53,11 +53,11 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
       if (isTyping) {
         setIsTyping(false);
       }
-      // 延迟800ms后显示选项
+      // 延迟3000ms后显示选项
       if (!showOptions && !selectedOption) {
         const timer = setTimeout(() => {
           setShowOptions(true);
-        }, 800);
+        }, 3000);
         return () => clearTimeout(timer);
       }
     }
