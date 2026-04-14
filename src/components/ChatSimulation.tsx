@@ -197,12 +197,25 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               className={`flex items-center gap-2 w-full h-12 transition-all ${isWaitingForUserClick ? 'cursor-pointer hover:bg-gray-200 rounded-lg p-1' : ''}`}
               onClick={handleInputClick}
             >
-              <div className="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center bg-white shrink-0">
+              <div className="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center bg-white shrink-0 relative z-10">
                 <span className="text-xl -mt-1">+</span>
               </div>
-              <div className="flex-grow h-10 bg-white border-2 border-black rounded-lg relative flex items-center justify-center overflow-hidden">
+              <div className="flex-grow relative h-10 flex items-center justify-center">
                 {isWaitingForUserClick && (
-                  !hasSeenHint ? (
+                  <motion.div
+                    className="absolute inset-0 rounded-lg border-4 border-[#fde047] pointer-events-none"
+                    initial={{ scale: 1, opacity: 0.8 }}
+                    animate={{ scale: 1.5, opacity: 0 }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1.5,
+                      ease: "easeOut"
+                    }}
+                  />
+                )}
+                <div className="w-full h-full bg-white border-2 border-black rounded-lg relative flex items-center justify-center z-10">
+                  {isWaitingForUserClick && (
+                    !hasSeenHint ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -228,8 +241,9 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
                     </motion.div>
                   )
                 )}
+                </div>
               </div>
-              <div className="w-16 h-10 bg-[#95ec69] border-2 border-black rounded-lg flex items-center justify-center font-bold">
+              <div className="w-16 h-10 bg-[#95ec69] border-2 border-black rounded-lg flex items-center justify-center font-bold relative z-10">
                 发送
               </div>
             </div>
