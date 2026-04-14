@@ -55,7 +55,7 @@ export default function Home({ mode = 'romance' }: HomeProps) {
           className="card-brutal p-4 sm:p-8 md:p-12 max-w-screen-xl w-full bg-[#fde047] flex flex-col items-center"
         >
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 uppercase tracking-tighter leading-tight">
-            {mode === 'romance' ? '反渣测试' : '全景防PUA综合测试'}
+            {mode === 'romance' ? '防渣测试' : '全景防PUA综合测试'}
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl font-bold mb-6 sm:mb-10 max-w-2xl mx-auto px-2">
             {mode === 'romance' 

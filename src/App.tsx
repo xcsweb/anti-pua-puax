@@ -44,7 +44,7 @@ function AppContent() {
       <nav className="card-brutal mb-4 sm:mb-8 p-3 sm:p-4 bg-white flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 w-full max-w-screen-xl mx-auto">
         <div className="font-black text-xl sm:text-2xl tracking-tighter uppercase">PUAX图鉴</div>
         <div className="flex gap-2 sm:gap-4 font-bold text-sm sm:text-base">
-          <Link to="/romance" className={getLinkClass('/romance')}>反渣测试</Link>
+          <Link to="/romance" className={getLinkClass('/romance')}>防渣测试</Link>
           <Link to="/full" className={getLinkClass('/full')}>
             <span className="hidden sm:inline">全景防PUA综合测试</span>
             <span className="sm:hidden">全景测试</span>
