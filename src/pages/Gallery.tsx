@@ -1,10 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
-import { resultDictionary } from '../utils/scoring';
+import { ArrowLeft, Briefcase, Heart } from 'lucide-react';
+import { romanceDictionary, fullDictionary } from '../utils/scoring';
 
 export default function Gallery() {
   const navigate = useNavigate();
+  const { type } = useParams<{ type?: string }>();
+  
+  const activeTab = type === 'romance' ? 'romance' : 'full';
+
+  const handleTabChange = (tab: 'full' | 'romance') => {
+    navigate(`/gallery/${tab}`);
+  };
 
   const colors = [
     'bg-[#fde047]', // yellow
@@ -17,10 +24,12 @@ export default function Gallery() {
     'bg-[#d8b4fe]', // light purple
   ];
 
+  const currentDictionary = activeTab === 'full' ? fullDictionary : romanceDictionary;
+
   return (
     <div className="flex flex-col items-center justify-start min-h-[80vh] py-8 max-w-screen-xl mx-auto w-full px-4 md:px-8">
       {/* Header */}
-      <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+      <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
         <motion.button
           whileHover={{ scale: 1.05, x: -5 }}
           whileTap={{ scale: 0.95 }}
@@ -37,9 +46,35 @@ export default function Gallery() {
         <div className="w-[180px] hidden md:block"></div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-4 mb-12 flex-wrap justify-center">
+        <motion.button
+          whileHover={{ scale: 1.05, rotate: -1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleTabChange('full')}
+          className={`btn-brutal text-xl py-3 px-6 flex items-center gap-3 cursor-pointer shadow-[4px_4px_0px_#000] border-[4px] border-black font-black ${
+            activeTab === 'full' ? 'bg-[#86efac]' : 'bg-white'
+          }`}
+        >
+          <Briefcase size={24} strokeWidth={3} />
+          全景模式
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05, rotate: 1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleTabChange('romance')}
+          className={`btn-brutal text-xl py-3 px-6 flex items-center gap-3 cursor-pointer shadow-[4px_4px_0px_#000] border-[4px] border-black font-black ${
+            activeTab === 'romance' ? 'bg-[#f9a8d4]' : 'bg-white'
+          }`}
+        >
+          <Heart size={24} strokeWidth={3} />
+          恋爱模式
+        </motion.button>
+      </div>
+
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 w-full">
-        {Object.entries(resultDictionary).map(([code, details], index) => {
+        {Object.entries(currentDictionary).map(([code, details], index) => {
           const bgColor = colors[index % colors.length];
           // Assuming animal format is "🦅 孤鹰" or just "🦅"
           const parts = details.animal.split(' ');
@@ -48,7 +83,7 @@ export default function Gallery() {
 
           return (
             <motion.div
-              key={code}
+              key={code + activeTab} // 强制重新渲染动画
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 

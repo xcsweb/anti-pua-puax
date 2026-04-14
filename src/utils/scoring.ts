@@ -1,4 +1,4 @@
-import type { ScoreOption, ResultDetails } from '../types';
+import type { ScoreOption, ResultDetails, TestMode } from '../types';
 
 export const calculateResult = (scores: ScoreOption, questionCount: number = 24): string => {
   const threshold = questionCount * 5;
@@ -50,7 +50,7 @@ export const getDoubleStandardComment = (work: number, family: number, romance: 
   return "你的防御力忽高忽低，主打一个薛定谔的清醒。";
 };
 
-export const resultDictionary: Record<string, ResultDetails> = {
+export const romanceDictionary: Record<string, ResultDetails> = {
   // === P开头：清醒组（Rational） ===
   PUAX: {
     title: '赛博阎王',
@@ -200,7 +200,157 @@ export const resultDictionary: Record<string, ResultDetails> = {
   }
 };
 
-export const getResultDetails = (code: string): ResultDetails => {
+export const fullDictionary: Record<string, ResultDetails> = {
+  // === P开头：清醒组（Rational） ===
+  PUAX: {
+    title: '职场阎王',
+    desc: '不管在职场、家庭还是社交圈，你都是神一般的存在。老板想给你画饼？你反手就把面粉呼他脸上。亲戚想对你道德绑架？你当场教他们怎么做人。没有任何套路能逃过你的火眼金睛，主打一个六亲不认、油盐不进。',
+    dangerLevel: '0% (资本家看了都落泪)',
+    keywords: ['反向画饼', '六亲不认', '情绪终结者', '赛博活佛'],
+    animal: '🦅 孤鹰',
+    bestMatch: 'PSDX',
+    worstMatch: 'DSDB'
+  },
+  PUDX: {
+    title: '内卷狂魔',
+    desc: '你脑子比谁都清醒，态度比谁都强硬，但偏偏就是喜欢沉浸在“卷王”的人设里无法自拔。明知道大环境在压榨你，你不仅不反抗，还要顺便拉着全团队一起用命换钱。你的座右铭是：“只要我卷得够快，镰刀就割不到我”。',
+    dangerLevel: '20% (主动选择被压榨)',
+    keywords: ['卷王之王', '团队推土机', '用命换钱', '清醒打工魂'],
+    animal: '🐺 狼',
+    bestMatch: 'PSAX',
+    worstMatch: 'DUAB'
+  },
+  PSAX: {
+    title: '糊弄学宗师',
+    desc: '你深谙社会生存法则，表面上是全公司/全家最听话的好好先生，实际上把“太极拳”打得登峰造极。老板安排任务你满口答应，亲戚催婚你连连点头，但转头就把事情抛到九霄云外。你用最饱满的情绪，做最少的事。',
+    dangerLevel: '10% (情绪价值拉满)',
+    keywords: ['太极宗师', '高情商糊弄', '看破不说破', '隐形王者'],
+    animal: '🦊 狐狸',
+    bestMatch: 'PUDX',
+    worstMatch: 'DSDX'
+  },
+  PSDX: {
+    title: '职场老黄牛',
+    desc: '你明明什么套路都懂，知道老板在画饼，知道朋友在利用你，但你就是狠不下心撕破脸。为了维持表面的体面和和平，你默默咽下所有的委屈，硬生生把自己逼成了所有人眼里的“老好人”和“万能背锅侠”。',
+    dangerLevel: '50% (清醒地做牛马)',
+    keywords: ['清醒背锅侠', '和平主义者', '不敢掀桌', '万能砖块'],
+    animal: '🐂 水牛',
+    bestMatch: 'PUAX',
+    worstMatch: 'DSAB'
+  },
+  PUAB: {
+    title: '钢铁直球王',
+    desc: '你做事雷厉风行极度独立，但在人情世故上简直是个瞎子。你经常因为看不懂空气而被孤立，或者被心机同事当枪使。你以为自己在整顿职场/家族群，其实只是别人眼里的笑话，主打一个“我很强但我很瞎”。',
+    dangerLevel: '40% (容易被当枪使)',
+    keywords: ['情商洼地', '莽夫本夫', '职场孤狼', '空气绝缘体'],
+    animal: '🦏 犀牛',
+    bestMatch: 'DUAX',
+    worstMatch: 'DUDB'
+  },
+  PUDB: {
+    title: '护主狂犬',
+    desc: '你对认定的圈子或领导有一种迷之忠诚，只要是自己人你就无脑护短。别人稍微挑拨离间，你就像个炸药包一样被点燃。你的清醒全用在对付外人上，对自己人则是毫无底线，极容易被所谓“兄弟情”和“大局观”忽悠。',
+    dangerLevel: '60% (容易被画大饼拿捏)',
+    keywords: ['忠诚卫士', '无脑护短', '一点就着', '双标王者'],
+    animal: '🐕 杜宾犬',
+    bestMatch: 'PSAB',
+    worstMatch: 'DUDX'
+  },
+  PSAB: {
+    title: '赛博鸵鸟',
+    desc: '你极其清醒地知道大环境有多糟糕，但你的应对策略就是把头埋进沙子里。只要麻烦不找上门，你绝不多管闲事。哪怕身边的同事或朋友正在被坑，你也只会默默观察，主打一个明哲保身、事不关己。',
+    dangerLevel: '30% (自保能力满分)',
+    keywords: ['明哲保身', '事不关己', '职场隐形人', '绝对中立'],
+    animal: '🐢 乌龟',
+    bestMatch: 'PUDB',
+    worstMatch: 'DUAX'
+  },
+  PSDB: {
+    title: '职场墙头草',
+    desc: '你脑子还算清醒，但为了合群，你可以放弃一切原则。团队里谁声音大你就听谁的，老板指东你绝不往西，亲戚说什么你都觉得有道理。你没有任何主见，只求在这个复杂的世界里苟延残喘、不被枪打出头鸟。',
+    dangerLevel: '70% (容易随波逐流被坑)',
+    keywords: ['毫无主见', '随波逐流', '职场混子', '绝对服从'],
+    animal: '🐏 绵羊',
+    bestMatch: 'DSAX',
+    worstMatch: 'DSDB'
+  },
+
+  // === D开头：恋爱脑组/糊涂组（Delusional） ===
+  DUAX: {
+    title: '职场疯批',
+    desc: '你做事全凭感觉，但直觉又准得可怕。谁要是敢惹你，哪怕是老板或长辈你也敢直接掀桌子。你从来不按常理出牌，是所有HR和亲戚长辈眼里的头号危险分子，也是整治各种不服的终极人形兵器。',
+    dangerLevel: '45% (伤敌一千自损八百)',
+    keywords: ['掀桌狂魔', '不服就干', '定时炸弹', '职场刺客'],
+    animal: '🦡 平头哥',
+    bestMatch: 'PUAB',
+    worstMatch: 'PSAB'
+  },
+  DUDX: {
+    title: '嘴强牛马',
+    desc: '你天天喊着要辞职、要跟奇葩亲戚断绝关系，一有不顺心就骂骂咧咧，但真让你行动你又怂了。你看得清所有的套路，但就是管不住自己的情绪，最后往往成了最容易被针对的那个倒霉蛋，天天挨打天天叫。',
+    dangerLevel: '65% (口嗨王者)',
+    keywords: ['雷声大雨点小', '容易被针对', '情绪化输出', '又怂又爱叫'],
+    animal: '🦔 刺猬',
+    bestMatch: 'DSAB',
+    worstMatch: 'PUDB'
+  },
+  DSAX: {
+    title: '大爱无疆',
+    desc: '你有能力也有眼光，但同理心过剩。看到同事被骂你会去安慰，看到别人加班你会去帮忙，朋友借钱你二话不说就转账。你试图拯救所有人，最后却把自己累出了结节，还落不到一句好，纯纯的“烂好人”。',
+    dangerLevel: '75% (感动中国职场版)',
+    keywords: ['烂好人', '大包大揽', '过度共情', '自找苦吃'],
+    animal: '🐘 大象',
+    bestMatch: 'PSDB',
+    worstMatch: 'PSAX'
+  },
+  DSDX: {
+    title: '终极接盘侠',
+    desc: '你不仅眼瞎，还特别喜欢倒贴。别人挖个坑，你不仅自己跳进去，还要顺手帮人家把土填上。同事的烂摊子你接，亲戚的破事你管，你的付出感动了天地，唯独感动不了那些正在拼命吸你血的渣渣。',
+    dangerLevel: '95% (超级血包)',
+    keywords: ['自带铲子', '有求必应', '万能充电宝', '人形血包'],
+    animal: '🦌 梅花鹿',
+    bestMatch: 'DSDB',
+    worstMatch: 'PUAX'
+  },
+  DUAB: {
+    title: '无脑炮灰',
+    desc: '你有一腔热血和极强的行动力，但方向全错。老板随便画个大饼，你就能像打了鸡血一样冲锋陷阵；长辈随便夸你两句，你就恨不得把家底掏空。你经常把精力浪费在毫无意义的事情上，是所有人最爱的无脑排头兵。',
+    dangerLevel: '80% (被人卖了还帮数钱)',
+    keywords: ['无脑冲锋', '炮灰一号', '瞎忙活', '一秒上头'],
+    animal: '🐗 野猪',
+    bestMatch: 'DUDB',
+    worstMatch: 'PUDX'
+  },
+  DUDB: {
+    title: '宇宙级巨婴',
+    desc: '你不仅能力不行，脾气还不小。遇到困难只会抱怨环境，出了问题只会推卸责任。你极度依赖团队和家人，却又总是以自我为中心。你把无理取闹当成个性，是所有人都不想合作的职场/社交毒瘤。',
+    dangerLevel: '85% (团队破坏者)',
+    keywords: ['情绪黑洞', '推锅大师', '撒泼打滚', '社交毒瘤'],
+    animal: '🦥 树懒',
+    bestMatch: 'DUAB',
+    worstMatch: 'PUAB'
+  },
+  DSAB: {
+    title: '天生耗材',
+    desc: '你是那种被卖了还要帮人家写收据的极品冤种。明明自己有能力，却偏偏喜欢在各种奇葩关系里当牛做马。不管是职场画饼、亲情绑架还是社交PUA，你照单全收。你不是脾气好，你是对受虐有一种执着的迷恋。',
+    dangerLevel: '90% (顶级耗材)',
+    keywords: ['完美韭菜', '照单全收', '毫无底线', '人形垫脚石'],
+    animal: '🐹 仓鼠',
+    bestMatch: 'DUDX',
+    worstMatch: 'PSDX'
+  },
+  DSDB: {
+    title: '纯种韭菜',
+    desc: '你的存在就是为了给骗子冲业绩的。你没有底线，没有脑子，只有一颗时刻准备为别人粉身碎骨的圣母心。只要别人稍微给你点甜头，你就能把自己的全部身家双手奉上，堪称行走的人形提款机和绝世大血包。',
+    dangerLevel: '99.9% (骗子最爱)',
+    keywords: ['纯种韭菜', '人形提款机', '无脑倒贴', '终极血包'],
+    animal: '🐑 绵羊',
+    bestMatch: 'DSDX',
+    worstMatch: 'PUAX'
+  }
+};
+
+export const getResultDetails = (code: string, mode: TestMode): ResultDetails => {
   // 兜底默认值（处理未完全覆盖的16种情况）
   const defaultResult: ResultDetails = {
     title: '薛定谔的冤种',
@@ -212,5 +362,6 @@ export const getResultDetails = (code: string): ResultDetails => {
     worstMatch: 'DSDB'
   };
 
-  return resultDictionary[code] || defaultResult;
+  const dictionary = mode === 'romance' ? romanceDictionary : fullDictionary;
+  return dictionary[code] || defaultResult;
 };

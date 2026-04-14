@@ -45,8 +45,8 @@ export default function Result() {
 
     const code = calculateResult(scores, totalQuestionsCount);
     setResultCode(code);
-    setDetails(getResultDetails(code));
-  }, [scores, isFinished, navigate, totalQuestionsCount]);
+    setDetails(getResultDetails(code, testMode));
+  }, [scores, isFinished, navigate, totalQuestionsCount, testMode]);
 
   const workQuestionsCount = filteredQuestions.filter(q => q.category === 'work').length;
   const familyQuestionsCount = filteredQuestions.filter(q => q.category === 'family').length;
