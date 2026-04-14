@@ -40,14 +40,16 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8 font-brutal flex flex-col items-center">
-      <nav className="card-brutal mb-8 p-4 bg-white flex justify-between items-center w-full max-w-screen-xl mx-auto">
-        <div className="font-black text-2xl tracking-tighter uppercase">PUAX图鉴</div>
-        <div className="flex gap-4 font-bold">
+    <div className="min-h-screen p-2 sm:p-4 md:p-8 font-brutal flex flex-col items-center">
+      <nav className="card-brutal mb-4 sm:mb-8 p-3 sm:p-4 bg-white flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 w-full max-w-screen-xl mx-auto">
+        <div className="font-black text-xl sm:text-2xl tracking-tighter uppercase">PUAX图鉴</div>
+        <div className="flex gap-2 sm:gap-4 font-bold text-sm sm:text-base">
           <Link to="/romance" className={getLinkClass('/romance')}>反渣测试</Link>
-          <Link to="/full" className={getLinkClass('/full')}>全景防PUA综合测试</Link>
-          <Link to="/gallery/romance" className={getLinkClass('/gallery/romance')}>恋爱图鉴</Link>
-          <Link to="/gallery/full" className={getLinkClass('/gallery/full')}>全景图鉴</Link>
+          <Link to="/full" className={getLinkClass('/full')}>
+            <span className="hidden sm:inline">全景防PUA综合测试</span>
+            <span className="sm:hidden">全景测试</span>
+          </Link>
+          <Link to="/gallery/romance" className={getLinkClass('/gallery/romance')}>图鉴</Link>
         </div>
       </nav>
       
