@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Question, AnswerOption, ScoreOption } from '../types';
-import { ChevronLeft, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, MoreHorizontal, Hand } from 'lucide-react';
 import { getAvatarUrl } from '../utils/avatars';
 import { useStore } from '../store/useStore';
 
@@ -17,6 +17,11 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
   const [displayedMessages, setDisplayedMessages] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(true);
   const [currentQuestionId, setCurrentQuestionId] = useState(question.id);
+  const [hasSeenHint, setHasSeenHint] = useState(true);
+
+  useEffect(() => {
+    setHasSeenHint(!!localStorage.getItem('puax_has_seen_hint'));
+  }, []);
   
   const gender = useStore((state) => state.gender) || undefined;
   const userAvatar = getAvatarUrl('user', undefined, gender);
@@ -53,15 +58,22 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
       if (isTyping) {
         setIsTyping(false);
       }
-      // 延迟3000ms后显示选项
-      if (!showOptions && !selectedOption) {
-        const timer = setTimeout(() => {
-          setShowOptions(true);
-        }, 3000);
-        return () => clearTimeout(timer);
+      // 不再自动显示选项，需要用户点击
+    }
+  }, [displayedMessages.length, isTyping, question.id, question.scenario]);
+
+  const messages = Array.isArray(question.scenario) ? question.scenario : [question.scenario];
+  const isWaitingForUserClick = displayedMessages.length === messages.length && !isTyping && !showOptions && !selectedOption;
+
+  const handleInputClick = () => {
+    if (isWaitingForUserClick) {
+      setShowOptions(true);
+      if (!hasSeenHint) {
+        localStorage.setItem('puax_has_seen_hint', 'true');
+        setHasSeenHint(true);
       }
     }
-  }, [displayedMessages.length, isTyping, question.id, question.scenario, showOptions, selectedOption]);
+  };
 
   const handleSelect = (option: AnswerOption) => {
     setSelectedOption(option);
@@ -181,11 +193,42 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               ))}
             </motion.div>
           ) : (
-            <div className="flex items-center gap-2 w-full h-12">
+            <div 
+              className={`flex items-center gap-2 w-full h-12 transition-all ${isWaitingForUserClick ? 'cursor-pointer hover:bg-gray-200 rounded-lg p-1' : ''}`}
+              onClick={handleInputClick}
+            >
               <div className="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center bg-white shrink-0">
                 <span className="text-xl -mt-1">+</span>
               </div>
-              <div className="flex-grow h-10 bg-white border-2 border-black rounded-lg"></div>
+              <div className="flex-grow h-10 bg-white border-2 border-black rounded-lg relative flex items-center justify-center overflow-hidden">
+                {isWaitingForUserClick && (
+                  !hasSeenHint ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 bg-[#fde047] flex items-center justify-center gap-2 text-black font-bold border-2 border-black rounded-lg"
+                    >
+                      <motion.div
+                        animate={{ y: [0, -8, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
+                      >
+                        <Hand size={20} className="fill-current" />
+                      </motion.div>
+                      点击此处回复...
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="absolute inset-0 flex items-center justify-center gap-2 text-gray-500 font-bold"
+                    >
+                      <div className="w-2 h-2 rounded-full bg-red-500" />
+                      点击回复
+                    </motion.div>
+                  )
+                )}
+              </div>
               <div className="w-16 h-10 bg-[#95ec69] border-2 border-black rounded-lg flex items-center justify-center font-bold">
                 发送
               </div>
