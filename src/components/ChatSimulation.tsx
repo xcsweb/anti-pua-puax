@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Question, AnswerOption, ScoreOption } from '../types';
 import { ChevronLeft, MoreHorizontal } from 'lucide-react';
+import { getAvatarUrl } from '../utils/avatars';
+import { useStore } from '../store/useStore';
 
 interface ChatSimulationProps {
   question: Question;
@@ -14,6 +16,10 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
   const [selectedOption, setSelectedOption] = useState<AnswerOption | null>(null);
   const [showTyping, setShowTyping] = useState(true);
   const [currentQuestionId, setCurrentQuestionId] = useState(question.id);
+  
+  const gender = useStore((state) => state.gender) || undefined;
+  const userAvatar = getAvatarUrl('user', undefined, gender);
+  const senderAvatar = getAvatarUrl('sender', question);
 
   if (question.id !== currentQuestionId) {
     setCurrentQuestionId(question.id);
@@ -75,9 +81,10 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="self-start max-w-[75%]"
+              className="self-start max-w-[85%] flex gap-2"
             >
-              <div className="bg-white p-3 rounded-2xl rounded-tl-none border-2 border-black flex gap-1.5 items-center justify-center h-10 w-16">
+              <img src={senderAvatar} alt="sender" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200" />
+              <div className="bg-white p-3 rounded-2xl rounded-tl-none border-2 border-black flex gap-1.5 items-center justify-center h-10 w-16 mt-1">
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
@@ -93,9 +100,10 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               initial={{ scale: 0.8, opacity: 0, x: -20 }}
               animate={{ scale: 1, opacity: 1, x: 0 }}
               transition={{ type: 'spring', stiffness: 250, damping: 20 }}
-              className="self-start max-w-[75%]"
+              className="self-start max-w-[85%] flex gap-2"
             >
-              <div className="bg-white border-2 border-black p-3 rounded-2xl rounded-tl-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black">
+              <img src={senderAvatar} alt="sender" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200 mt-1" />
+              <div className="bg-white border-2 border-black p-3 rounded-2xl rounded-tl-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black mt-1">
                 {question.scenario}
               </div>
             </motion.div>
@@ -109,11 +117,12 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               initial={{ scale: 0.8, opacity: 0, x: 20 }}
               animate={{ scale: 1, opacity: 1, x: 0 }}
               transition={{ type: 'spring', stiffness: 250, damping: 20 }}
-              className="self-end max-w-[75%] mt-2"
+              className="self-end max-w-[85%] mt-2 flex gap-2 justify-end"
             >
-              <div className="bg-[#95ec69] border-2 border-black p-3 rounded-2xl rounded-tr-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black">
+              <div className="bg-[#95ec69] border-2 border-black p-3 rounded-2xl rounded-tr-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black mt-1">
                 {selectedOption.text}
               </div>
+              <img src={userAvatar} alt="user" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200 mt-1" />
             </motion.div>
           )}
         </AnimatePresence>
