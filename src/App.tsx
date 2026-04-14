@@ -32,7 +32,8 @@ function App() {
         <nav className="card-brutal mb-8 p-4 bg-white flex justify-between items-center w-full max-w-screen-xl mx-auto">
           <div className="font-black text-2xl tracking-tighter uppercase">PUAX图鉴</div>
           <div className="flex gap-4 font-bold">
-            <Link to="/" className="hover:underline decoration-4 underline-offset-4">首页</Link>
+            <Link to="/romance" className="hover:underline decoration-4 underline-offset-4">反渣测试</Link>
+            <Link to="/full" className="hover:underline decoration-4 underline-offset-4">全景防PUA测试</Link>
             <Link to="/gallery/romance" className="hover:underline decoration-4 underline-offset-4">恋爱图鉴</Link>
             <Link to="/gallery/full" className="hover:underline decoration-4 underline-offset-4">全景图鉴</Link>
           </div>
@@ -40,7 +41,9 @@ function App() {
         
         <main className="w-full flex flex-col items-center flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home mode="romance" />} />
+            <Route path="/romance" element={<Home mode="romance" />} />
+            <Route path="/full" element={<Home mode="full" />} />
             <Route path="/assessment" element={<Assessment />} />
             <Route path="/result" element={<Result />} />
             <Route path="/gallery" element={<Gallery />} />

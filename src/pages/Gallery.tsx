@@ -49,17 +49,6 @@ export default function Gallery() {
       {/* Tabs */}
       <div className="flex gap-4 mb-12 flex-wrap justify-center">
         <motion.button
-          whileHover={{ scale: 1.05, rotate: -1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleTabChange('full')}
-          className={`btn-brutal text-xl py-3 px-6 flex items-center gap-3 cursor-pointer shadow-[4px_4px_0px_#000] border-[4px] border-black font-black ${
-            activeTab === 'full' ? 'bg-[#86efac]' : 'bg-white'
-          }`}
-        >
-          <Briefcase size={24} strokeWidth={3} />
-          全景模式
-        </motion.button>
-        <motion.button
           whileHover={{ scale: 1.05, rotate: 1 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleTabChange('romance')}
@@ -69,6 +58,17 @@ export default function Gallery() {
         >
           <Heart size={24} strokeWidth={3} />
           恋爱模式
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05, rotate: -1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleTabChange('full')}
+          className={`btn-brutal text-xl py-3 px-6 flex items-center gap-3 cursor-pointer shadow-[4px_4px_0px_#000] border-[4px] border-black font-black ${
+            activeTab === 'full' ? 'bg-[#86efac]' : 'bg-white'
+          }`}
+        >
+          <Briefcase size={24} strokeWidth={3} />
+          全景模式
         </motion.button>
       </div>
 
