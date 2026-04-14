@@ -1,5 +1,6 @@
 export type QuestionType = 'chat';
 export type Gender = 'male' | 'female' | null;
+export type TestMode = 'romance' | 'full' | null;
 
 export interface ScoreOption {
   p: number; // Rational (清醒) vs Delusional (恋爱脑)
@@ -17,6 +18,7 @@ export interface AnswerOption {
 export interface Question {
   id: string;
   targetGender?: Gender; // null or undefined means suitable for both
+  relationshipStage?: 'friend' | 'dating' | 'engaged' | 'married' | 'ex';
   type: QuestionType;
   scenario: string; // Background text or the message from the other person
   options: AnswerOption[];

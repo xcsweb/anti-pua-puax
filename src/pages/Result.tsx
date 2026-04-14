@@ -11,7 +11,7 @@ import type { ResultDetails } from '../types';
 
 export default function Result() {
   const navigate = useNavigate();
-  const { scores, categoryScores, gender, resetTest, isFinished } = useStore();
+  const { scores, categoryScores, gender, resetTest, isFinished, testMode } = useStore();
   const cardRef = useRef<HTMLDivElement>(null);
 
   const [resultCode, setResultCode] = useState('');
@@ -26,6 +26,16 @@ export default function Result() {
   });
   const [isCapturing, setIsCapturing] = useState(false);
 
+  let filteredQuestions = questions.filter(
+    q => !q.targetGender || q.targetGender === gender
+  );
+  if (testMode === 'romance') {
+    filteredQuestions = filteredQuestions.filter(q => q.category === 'romance');
+  } else if (testMode === 'full') {
+    filteredQuestions = filteredQuestions.slice(0, 50);
+  }
+  const totalQuestionsCount = filteredQuestions.length;
+
   useEffect(() => {
     // If user accesses this page without finishing, redirect to home
     if (!isFinished) {
@@ -33,14 +43,14 @@ export default function Result() {
       return;
     }
 
-    const code = calculateResult(scores);
+    const code = calculateResult(scores, totalQuestionsCount);
     setResultCode(code);
     setDetails(getResultDetails(code));
-  }, [scores, isFinished, navigate]);
+  }, [scores, isFinished, navigate, totalQuestionsCount]);
 
-  const workQuestionsCount = questions.filter(q => q.category === 'work' && (!q.targetGender || q.targetGender === gender)).length;
-  const familyQuestionsCount = questions.filter(q => q.category === 'family' && (!q.targetGender || q.targetGender === gender)).length;
-  const romanceQuestionsCount = questions.filter(q => q.category === 'romance' && (!q.targetGender || q.targetGender === gender)).length;
+  const workQuestionsCount = filteredQuestions.filter(q => q.category === 'work').length;
+  const familyQuestionsCount = filteredQuestions.filter(q => q.category === 'family').length;
+  const romanceQuestionsCount = filteredQuestions.filter(q => q.category === 'romance').length;
 
   const workScore = calculateCategoryDefense(categoryScores.work, workQuestionsCount);
   const familyScore = calculateCategoryDefense(categoryScores.family, familyQuestionsCount);
@@ -114,12 +124,13 @@ export default function Result() {
   const [emoji, animalName] = details.animal ? details.animal.split(' ') : ['🤔', '未知生物'];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[100dvh] px-4 py-8 overflow-y-auto bg-[#f8fafc]">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-[400px] w-full flex flex-col items-center gap-6"
-      >
+    <div className="flex flex-col items-center justify-center min-h-[100dvh] px-4 py-8 overflow-y-auto bg-[#f8fafc] w-full">
+      <div className="max-w-screen-xl mx-auto w-full flex flex-col items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-[400px] w-full flex flex-col items-center gap-6"
+        >
         {/* Card to Capture */}
         <div 
           ref={cardRef}
@@ -329,6 +340,7 @@ export default function Result() {
           </motion.button>
         </motion.div>
       </motion.div>
+      </div>
     </div>
   );
 }

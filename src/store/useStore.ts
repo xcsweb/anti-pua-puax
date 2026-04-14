@@ -1,15 +1,17 @@
 import { create } from 'zustand';
-import type { ScoreOption, Gender, CategoryScores, Question } from '../types';
+import type { ScoreOption, Gender, CategoryScores, Question, TestMode } from '../types';
 import { questions } from '../data/questions';
 
 interface StoreState {
   gender: Gender;
+  testMode: TestMode;
   currentQuestionIndex: number;
   scores: ScoreOption;
   categoryScores: CategoryScores;
   answers: Record<string, string>; // questionId -> optionId
   isFinished: boolean;
   setGender: (gender: Gender) => void;
+  setTestMode: (mode: TestMode) => void;
   answerQuestion: (questionId: string, optionId: string, optionScores: ScoreOption, category: Question['category']) => void;
   resetTest: () => void;
 }
@@ -24,6 +26,7 @@ const initialCategoryScores: CategoryScores = {
 
 export const useStore = create<StoreState>((set) => ({
   gender: null,
+  testMode: null,
   currentQuestionIndex: 0,
   scores: { ...initialScores },
   categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),
@@ -32,6 +35,10 @@ export const useStore = create<StoreState>((set) => ({
 
   setGender: (gender: Gender) => {
     set({ gender });
+  },
+
+  setTestMode: (mode: TestMode) => {
+    set({ testMode: mode });
   },
 
   answerQuestion: (questionId, optionId, optionScores, category) => {
@@ -56,10 +63,16 @@ export const useStore = create<StoreState>((set) => ({
         }
       };
 
-      // 筛选当前性别和通用的题目
-      const filteredQuestions = questions.filter(
+      // 筛选当前性别和通用的题目，以及根据 testMode 筛选（若为 romance 则只出 romance 类）
+      let filteredQuestions = questions.filter(
         q => !q.targetGender || q.targetGender === state.gender
       );
+
+      if (state.testMode === 'romance') {
+        filteredQuestions = filteredQuestions.filter(q => q.category === 'romance' && q.targetGender === state.gender);
+      } else if (state.testMode === 'full') {
+        filteredQuestions = filteredQuestions.filter(q => !q.targetGender).slice(0, 50);
+      }
 
       const nextIndex = state.currentQuestionIndex + 1;
       const finished = nextIndex >= filteredQuestions.length;
@@ -77,6 +90,7 @@ export const useStore = create<StoreState>((set) => ({
   resetTest: () => {
     set({
       gender: null,
+      testMode: null,
       currentQuestionIndex: 0,
       scores: { ...initialScores },
       categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),

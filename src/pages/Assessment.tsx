@@ -10,7 +10,7 @@ import type { ScoreOption } from '../types';
 
 export default function Assessment() {
   const navigate = useNavigate();
-  const { currentQuestionIndex, answerQuestion, isFinished, gender } = useStore();
+  const { currentQuestionIndex, answerQuestion, isFinished, gender, testMode } = useStore();
 
   useEffect(() => {
     if (isFinished) {
@@ -18,16 +18,23 @@ export default function Assessment() {
     }
   }, [isFinished, navigate]);
 
-  // 如果没有选择性别，跳回首页
+  // 如果没有选择性别且不是全景模式，跳回首页
   useEffect(() => {
-    if (!gender) {
+    if (!gender && testMode !== 'full') {
       navigate('/');
     }
-  }, [gender, navigate]);
+  }, [gender, testMode, navigate]);
 
-  const filteredQuestions = questions.filter(
+  let filteredQuestions = questions.filter(
     q => !q.targetGender || q.targetGender === gender
   );
+
+  if (testMode === 'romance') {
+    filteredQuestions = filteredQuestions.filter(q => q.category === 'romance' && q.targetGender === gender);
+  } else if (testMode === 'full') {
+    // just take 50 full mode questions
+    filteredQuestions = filteredQuestions.filter(q => !q.targetGender).slice(0, 50);
+  }
 
   const currentQuestion = filteredQuestions[currentQuestionIndex];
 
@@ -44,19 +51,21 @@ export default function Assessment() {
   };
 
   return (
-    <div className="w-full flex flex-col min-h-[80vh] px-4 py-8">
-      <div className="max-w-4xl mx-auto w-full">
+    <div className="w-full flex flex-col min-h-[80vh] px-4 py-8 max-w-screen-xl mx-auto">
+      <div className="w-full">
         <ProgressBar current={currentQuestionIndex + 1} total={filteredQuestions.length} />
 
-        <div className="mt-8 flex-grow">
-          <AnimatePresence mode="wait">
-            <ChatSimulation
-              key={currentQuestion.id}
-              question={currentQuestion}
-              onAnswer={handleAnswer}
-              index={currentQuestionIndex}
-            />
-          </AnimatePresence>
+        <div className="mt-8 flex-grow flex justify-center w-full">
+          <div className="w-full max-w-4xl">
+            <AnimatePresence mode="wait">
+              <ChatSimulation
+                key={currentQuestion.id}
+                question={currentQuestion}
+                onAnswer={handleAnswer}
+                index={currentQuestionIndex}
+              />
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>

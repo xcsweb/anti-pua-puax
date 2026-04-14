@@ -18,7 +18,7 @@ export default function Gallery() {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-[80vh] py-8">
+    <div className="flex flex-col items-center justify-start min-h-[80vh] py-8 max-w-screen-xl mx-auto w-full px-4 md:px-8">
       {/* Header */}
       <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
         <motion.button
@@ -38,7 +38,7 @@ export default function Gallery() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 w-full">
         {Object.entries(resultDictionary).map(([code, details], index) => {
           const bgColor = colors[index % colors.length];
           // Assuming animal format is "🦅 孤鹰" or just "🦅"

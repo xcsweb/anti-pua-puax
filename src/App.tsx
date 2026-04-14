@@ -28,8 +28,8 @@ function About() {
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen p-4 md:p-8 font-brutal">
-        <nav className="card-brutal mb-8 p-4 bg-white flex justify-between items-center max-w-4xl mx-auto">
+      <div className="min-h-screen p-4 md:p-8 font-brutal flex flex-col items-center">
+        <nav className="card-brutal mb-8 p-4 bg-white flex justify-between items-center w-full max-w-screen-xl mx-auto">
           <div className="font-black text-2xl tracking-tighter uppercase">PUAX图鉴</div>
           <div className="flex gap-4 font-bold">
             <Link to="/" className="hover:underline decoration-4 underline-offset-4">首页</Link>
@@ -37,7 +37,7 @@ function App() {
           </div>
         </nav>
         
-        <main className="max-w-6xl mx-auto">
+        <main className="w-full flex flex-col items-center flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/assessment" element={<Assessment />} />
