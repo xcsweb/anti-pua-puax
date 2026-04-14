@@ -103,8 +103,18 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               className="self-start max-w-[85%] flex gap-2"
             >
               <img src={senderAvatar} alt="sender" className="w-10 h-10 rounded-md border-2 border-black shrink-0 object-cover bg-gray-200 mt-1" />
-              <div className="bg-white border-2 border-black p-3 rounded-2xl rounded-tl-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black mt-1">
-                {question.scenario}
+              <div className="flex flex-col gap-2 items-start mt-1">
+                {Array.isArray(question.scenario) ? (
+                  question.scenario.map((text, idx) => (
+                    <div key={idx} className={`bg-white border-2 border-black p-3 rounded-2xl ${idx === 0 ? 'rounded-tl-none' : ''} shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black`}>
+                      {text}
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-white border-2 border-black p-3 rounded-2xl rounded-tl-none shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-base md:text-lg font-bold leading-relaxed text-black">
+                    {question.scenario}
+                  </div>
+                )}
               </div>
             </motion.div>
           )}

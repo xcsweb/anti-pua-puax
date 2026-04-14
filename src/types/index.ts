@@ -20,7 +20,7 @@ export interface Question {
   targetGender?: Gender; // null or undefined means suitable for both
   relationshipStage?: 'friend' | 'dating' | 'engaged' | 'married' | 'ex';
   type: QuestionType;
-  scenario: string; // Background text or the message from the other person
+  scenario: string | string[]; // Background text or the message from the other person
   options: AnswerOption[];
   senderName: string;
   category: 'romance' | 'work' | 'family' | 'social';
