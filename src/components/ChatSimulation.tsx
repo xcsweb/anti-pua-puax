@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Question, AnswerOption, ScoreOption } from '../types';
-import { ChevronLeft, MoreHorizontal, Hand } from 'lucide-react';
+import { ChevronLeft, MoreHorizontal } from 'lucide-react';
 import { getAvatarUrl } from '../utils/avatars';
 import { useStore } from '../store/useStore';
 
@@ -201,32 +201,33 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
                 <span className="text-xl -mt-1">+</span>
               </div>
               <div className="flex-grow relative h-10 flex items-center justify-center">
-                {isWaitingForUserClick && (
-                  <motion.div
-                    className="absolute inset-0 rounded-lg border-4 border-[#fde047] pointer-events-none"
-                    initial={{ scale: 1, opacity: 0.8 }}
-                    animate={{ scale: 1.5, opacity: 0 }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 1.5,
-                      ease: "easeOut"
-                    }}
-                  />
-                )}
                 <div className="w-full h-full bg-white border-2 border-black rounded-lg relative flex items-center justify-center z-10">
                   {isWaitingForUserClick && (
                     !hasSeenHint ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="absolute inset-0 bg-[#fde047] flex items-center justify-center gap-2 text-black font-bold border-2 border-black rounded-lg"
+                      className="absolute inset-0 flex items-center justify-center gap-2 text-black font-bold"
                     >
-                      <motion.div
-                        animate={{ y: [0, -8, 0] }}
-                        transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
-                      >
-                        <Hand size={20} className="fill-current" />
-                      </motion.div>
+                      <div className="relative flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-red-500 relative z-20" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                          {[0, 1, 2].map((i) => (
+                            <motion.div
+                              key={i}
+                              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-black"
+                              initial={{ scale: 1, opacity: 0.3 }}
+                              animate={{ scale: 8, opacity: 0 }}
+                              transition={{
+                                repeat: Infinity,
+                                duration: 2.5,
+                                delay: i * 0.8,
+                                ease: "easeOut"
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
                       点击此处回复...
                     </motion.div>
                   ) : (
@@ -234,9 +235,8 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
                       initial={{ opacity: 0 }}
                       animate={{ opacity: [0.4, 1, 0.4] }}
                       transition={{ repeat: Infinity, duration: 2 }}
-                      className="absolute inset-0 flex items-center justify-center gap-2 text-gray-500 font-bold"
+                      className="absolute inset-0 flex items-center justify-center text-gray-500 font-bold"
                     >
-                      <div className="w-2 h-2 rounded-full bg-red-500" />
                       点击回复
                     </motion.div>
                   )
