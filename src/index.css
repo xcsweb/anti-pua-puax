@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brutal-bg: #f0f0f0;
+  --color-brutal-yellow: #fde047;
+  --color-brutal-pink: #f9a8d4;
+  --color-brutal-blue: #93c5fd;
+  --color-brutal-green: #86efac;
+  --color-brutal-black: #1a1a1a;
+  --color-brutal-white: #ffffff;
+  
+  --shadow-brutal: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-lg: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-sm: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-active: 0px 0px 0px 0px rgba(0, 0, 0, 1);
+
+  --font-brutal: 'Space Grotesk', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brutal-bg);
+    color: var(--color-brutal-black);
+    font-family: var(--font-brutal);
+    /* Standard Neo-Brutalism reset elements */
+  }
+
+  /* Base brutalist border utility if needed globally */
+  * {
+    border-color: var(--color-brutal-black);
+  }
+}
+
+/* Custom Utilities for Neo-Brutalism */
+@utility border-brutal {
+  border: 3px solid var(--color-brutal-black);
+}
+
+@utility card-brutal {
+  @apply border-brutal bg-brutal-white shadow-brutal transition-all;
+}
+
+@utility btn-brutal {
+  @apply border-brutal px-6 py-2 font-bold shadow-brutal transition-all hover:-translate-y-1 hover:shadow-brutal-lg active:translate-y-1 active:shadow-brutal-active;
+}
