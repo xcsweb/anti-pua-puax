@@ -2,6 +2,44 @@ import { create } from 'zustand';
 import type { ScoreOption, Gender, CategoryScores, Question, TestMode } from '../types';
 import { questions } from '../data/questions';
 
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+const generateShuffledQuestions = (gender: Gender, testMode: TestMode): Question[] => {
+  if (!testMode) return [];
+  
+  let filteredQuestions = questions.filter(
+    q => !q.targetGender || q.targetGender === gender
+  );
+
+  if (testMode === 'romance') {
+    filteredQuestions = filteredQuestions.filter(q => q.category === 'romance' && q.targetGender === gender);
+  } else if (testMode === 'full') {
+    filteredQuestions = filteredQuestions.filter(q => !q.targetGender);
+  }
+
+  // Shuffle questions
+  let shuffled = shuffleArray(filteredQuestions);
+  
+  if (testMode === 'full') {
+    shuffled = shuffled.slice(0, 50);
+  }
+
+  // Shuffle options for each question
+  shuffled = shuffled.map(q => ({
+    ...q,
+    options: shuffleArray(q.options)
+  }));
+
+  return shuffled;
+};
+
 interface StoreState {
   gender: Gender;
   testMode: TestMode;
@@ -10,6 +48,7 @@ interface StoreState {
   categoryScores: CategoryScores;
   answers: Record<string, string>; // questionId -> optionId
   isFinished: boolean;
+  shuffledQuestions: Question[];
   setGender: (gender: Gender) => void;
   setTestMode: (mode: TestMode) => void;
   answerQuestion: (questionId: string, optionId: string, optionScores: ScoreOption, category: Question['category']) => void;
@@ -32,13 +71,20 @@ export const useStore = create<StoreState>((set) => ({
   categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),
   answers: {},
   isFinished: false,
+  shuffledQuestions: [],
 
   setGender: (gender: Gender) => {
-    set({ gender });
+    set((state) => ({ 
+      gender,
+      shuffledQuestions: generateShuffledQuestions(gender, state.testMode)
+    }));
   },
 
   setTestMode: (mode: TestMode) => {
-    set({ testMode: mode });
+    set((state) => ({ 
+      testMode: mode,
+      shuffledQuestions: generateShuffledQuestions(state.gender, mode)
+    }));
   },
 
   answerQuestion: (questionId, optionId, optionScores, category) => {
@@ -63,19 +109,8 @@ export const useStore = create<StoreState>((set) => ({
         }
       };
 
-      // 筛选当前性别和通用的题目，以及根据 testMode 筛选（若为 romance 则只出 romance 类）
-      let filteredQuestions = questions.filter(
-        q => !q.targetGender || q.targetGender === state.gender
-      );
-
-      if (state.testMode === 'romance') {
-        filteredQuestions = filteredQuestions.filter(q => q.category === 'romance' && q.targetGender === state.gender);
-      } else if (state.testMode === 'full') {
-        filteredQuestions = filteredQuestions.filter(q => !q.targetGender).slice(0, 50);
-      }
-
       const nextIndex = state.currentQuestionIndex + 1;
-      const finished = nextIndex >= filteredQuestions.length;
+      const finished = nextIndex >= state.shuffledQuestions.length;
 
       return {
         answers: { ...state.answers, [questionId]: optionId },
@@ -96,6 +131,7 @@ export const useStore = create<StoreState>((set) => ({
       categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),
       answers: {},
       isFinished: false,
+      shuffledQuestions: [],
     });
   },
 }));

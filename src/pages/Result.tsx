@@ -5,13 +5,12 @@ import type { Variants } from 'framer-motion';
 import { RotateCcw, Download, BookOpen } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { calculateResult, getResultDetails, calculateCategoryDefense, getDoubleStandardComment } from '../utils/scoring';
-import { questions } from '../data/questions';
 import html2canvas from 'html2canvas';
 import type { ResultDetails } from '../types';
 
 export default function Result() {
   const navigate = useNavigate();
-  const { scores, categoryScores, gender, resetTest, isFinished, testMode } = useStore();
+  const { scores, categoryScores, resetTest, isFinished, testMode, shuffledQuestions } = useStore();
   const cardRef = useRef<HTMLDivElement>(null);
 
   const [resultCode, setResultCode] = useState('');
@@ -26,15 +25,7 @@ export default function Result() {
   });
   const [isCapturing, setIsCapturing] = useState(false);
 
-  let filteredQuestions = questions.filter(
-    q => !q.targetGender || q.targetGender === gender
-  );
-  if (testMode === 'romance') {
-    filteredQuestions = filteredQuestions.filter(q => q.category === 'romance');
-  } else if (testMode === 'full') {
-    filteredQuestions = filteredQuestions.slice(0, 50);
-  }
-  const totalQuestionsCount = filteredQuestions.length;
+  const totalQuestionsCount = shuffledQuestions.length;
 
   useEffect(() => {
     // If user accesses this page without finishing, redirect to home
@@ -48,9 +39,9 @@ export default function Result() {
     setDetails(getResultDetails(code, testMode));
   }, [scores, isFinished, navigate, totalQuestionsCount, testMode]);
 
-  const workQuestionsCount = filteredQuestions.filter(q => q.category === 'work').length;
-  const familyQuestionsCount = filteredQuestions.filter(q => q.category === 'family').length;
-  const romanceQuestionsCount = filteredQuestions.filter(q => q.category === 'romance').length;
+  const workQuestionsCount = shuffledQuestions.filter(q => q.category === 'work').length;
+  const familyQuestionsCount = shuffledQuestions.filter(q => q.category === 'family').length;
+  const romanceQuestionsCount = shuffledQuestions.filter(q => q.category === 'romance').length;
 
   const workScore = calculateCategoryDefense(categoryScores.work, workQuestionsCount);
   const familyScore = calculateCategoryDefense(categoryScores.family, familyQuestionsCount);
