@@ -17,12 +17,7 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
   const [displayedMessages, setDisplayedMessages] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(true);
   const [currentQuestionId, setCurrentQuestionId] = useState(question.id);
-  const [hasSeenHint, setHasSeenHint] = useState(true);
 
-  useEffect(() => {
-    setHasSeenHint(!!localStorage.getItem('puax_has_seen_hint'));
-  }, []);
-  
   const gender = useStore((state) => state.gender) || undefined;
   const userAvatar = getAvatarUrl('user', undefined, gender);
   const senderAvatar = getAvatarUrl('sender', question);
@@ -68,10 +63,6 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
   const handleInputClick = () => {
     if (isWaitingForUserClick) {
       setShowOptions(true);
-      if (!hasSeenHint) {
-        localStorage.setItem('puax_has_seen_hint', 'true');
-        setHasSeenHint(true);
-      }
     }
   };
 
