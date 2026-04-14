@@ -207,7 +207,7 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
                             <motion.div
                               key={i}
                               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-black"
-                              initial={{ scale: 1, opacity: 0.3 }}
+                              initial={{ scale: 1, opacity: 0.15 }}
                               animate={{ scale: 8, opacity: 0 }}
                               transition={{
                                 repeat: Infinity,
