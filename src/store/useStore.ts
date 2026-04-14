@@ -11,7 +11,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-const generateShuffledQuestions = (gender: Gender, testMode: TestMode): Question[] => {
+const generateShuffledQuestions = (gender: Gender, testMode: TestMode, count: number): Question[] => {
   if (!testMode) return [];
   
   let filteredQuestions = questions.filter(
@@ -27,6 +27,10 @@ const generateShuffledQuestions = (gender: Gender, testMode: TestMode): Question
   // Shuffle questions
   let shuffled = shuffleArray(filteredQuestions);
   
+  if (count > 0) {
+    shuffled = shuffled.slice(0, count);
+  }
+  
   // Shuffle options for each question
   shuffled = shuffled.map(q => ({
     ...q,
@@ -39,14 +43,14 @@ const generateShuffledQuestions = (gender: Gender, testMode: TestMode): Question
 interface StoreState {
   gender: Gender;
   testMode: TestMode;
+  questionCount: number;
   currentQuestionIndex: number;
   scores: ScoreOption;
   categoryScores: CategoryScores;
   answers: Record<string, string>; // questionId -> optionId
   isFinished: boolean;
   shuffledQuestions: Question[];
-  setGender: (gender: Gender) => void;
-  setTestMode: (mode: TestMode) => void;
+  startTest: (mode: TestMode, gender: Gender, count: number) => void;
   answerQuestion: (questionId: string, optionId: string, optionScores: ScoreOption, category: Question['category']) => void;
   resetTest: () => void;
 }
@@ -62,6 +66,7 @@ const initialCategoryScores: CategoryScores = {
 export const useStore = create<StoreState>((set) => ({
   gender: null,
   testMode: null,
+  questionCount: 10,
   currentQuestionIndex: 0,
   scores: { ...initialScores },
   categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),
@@ -69,18 +74,18 @@ export const useStore = create<StoreState>((set) => ({
   isFinished: false,
   shuffledQuestions: [],
 
-  setGender: (gender: Gender) => {
-    set((state) => ({ 
-      gender,
-      shuffledQuestions: generateShuffledQuestions(gender, state.testMode)
-    }));
-  },
-
-  setTestMode: (mode: TestMode) => {
-    set((state) => ({ 
+  startTest: (mode: TestMode, gender: Gender, count: number) => {
+    set({
       testMode: mode,
-      shuffledQuestions: generateShuffledQuestions(state.gender, mode)
-    }));
+      gender,
+      questionCount: count,
+      currentQuestionIndex: 0,
+      scores: { ...initialScores },
+      categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),
+      answers: {},
+      isFinished: false,
+      shuffledQuestions: generateShuffledQuestions(gender, mode, count)
+    });
   },
 
   answerQuestion: (questionId, optionId, optionScores, category) => {
@@ -122,6 +127,7 @@ export const useStore = create<StoreState>((set) => ({
     set({
       gender: null,
       testMode: null,
+      questionCount: 10,
       currentQuestionIndex: 0,
       scores: { ...initialScores },
       categoryScores: JSON.parse(JSON.stringify(initialCategoryScores)),

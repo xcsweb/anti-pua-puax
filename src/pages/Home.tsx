@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, UserRound, BookOpen, Heart, ShieldAlert } from 'lucide-react';
@@ -9,21 +10,16 @@ interface HomeProps {
 
 export default function Home({ mode = 'romance' }: HomeProps) {
   const navigate = useNavigate();
-  const setGender = useStore((state) => state.setGender);
-  const setTestMode = useStore((state) => state.setTestMode);
-  const resetTest = useStore((state) => state.resetTest);
+  const startTest = useStore((state) => state.startTest);
+  const [questionCount, setQuestionCount] = useState<number>(10);
 
   const handleStartRomance = (gender: 'male' | 'female') => {
-    resetTest();
-    setGender(gender);
-    setTestMode('romance');
+    startTest('romance', gender, questionCount);
     navigate('/assessment');
   };
 
   const handleStartFull = () => {
-    resetTest();
-    setGender(null);
-    setTestMode('full');
+    startTest('full', null, questionCount);
     navigate('/assessment');
   };
 
@@ -65,6 +61,32 @@ export default function Home({ mode = 'romance' }: HomeProps) {
               ? '专注情感领域，测测你是人间清醒，还是天生大冤种？' 
               : '职场/家庭/情感全覆盖，测测你是人间清醒，还是天生大冤种？'}
           </p>
+
+          <div className="w-full max-w-2xl mx-auto mb-6 sm:mb-8">
+            <div className="card-brutal bg-white p-4 sm:p-6 border-[4px] border-black shadow-[4px_4px_0px_#000] flex flex-col items-center gap-4">
+              <h3 className="text-xl sm:text-2xl font-black">选择题目数量</h3>
+              <div className="flex flex-wrap gap-3 sm:gap-4 justify-center w-full">
+                {[10, 20, 30, 0].map((count) => {
+                  const isSelected = questionCount === count;
+                  return (
+                    <motion.button
+                      key={count}
+                      whileHover={!isSelected ? { scale: 1.05, rotate: count % 20 === 0 ? 2 : -2 } : {}}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setQuestionCount(count)}
+                      className={`btn-brutal text-base sm:text-lg font-black py-2 px-4 sm:px-6 border-[3px] border-black flex-1 min-w-[80px] max-w-[120px] transition-colors ${
+                        isSelected 
+                          ? 'bg-[#86efac] shadow-none translate-y-[4px] translate-x-[4px]' 
+                          : 'bg-white shadow-[4px_4px_0px_#000] hover:bg-gray-50'
+                      }`}
+                    >
+                      {count === 0 ? '全部' : `${count}题`}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
 
           <div className="w-full max-w-2xl mx-auto">
             {mode === 'romance' && (
