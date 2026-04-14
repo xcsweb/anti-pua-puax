@@ -18,7 +18,7 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
   const [isTyping, setIsTyping] = useState(true);
   const [currentQuestionId, setCurrentQuestionId] = useState(question.id);
 
-  const gender = useStore((state) => state.gender) || undefined;
+  const gender = useStore(state => state.gender) || undefined;
   const userAvatar = getAvatarUrl('user', undefined, gender);
   const senderAvatar = getAvatarUrl('sender', question);
 
@@ -194,7 +194,6 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
               <div className="flex-grow relative h-10 flex items-center justify-center">
                 <div className="w-full h-full bg-white border-2 border-black rounded-lg relative flex items-center justify-center z-10">
                   {isWaitingForUserClick && (
-                    !hasSeenHint ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -221,17 +220,7 @@ export const ChatSimulation: React.FC<ChatSimulationProps> = ({ question, onAnsw
                       </div>
                       点击此处回复...
                     </motion.div>
-                  ) : (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                      className="absolute inset-0 flex items-center justify-center text-gray-500 font-bold"
-                    >
-                      点击回复
-                    </motion.div>
-                  )
-                )}
+                  )}
                 </div>
               </div>
               <div className="w-16 h-10 bg-[#95ec69] border-2 border-black rounded-lg flex items-center justify-center font-bold relative z-10">
